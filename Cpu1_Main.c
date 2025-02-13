@@ -1,5 +1,5 @@
 /**********************************************************************************************************************
- * \file Cpu0_Main.c
+ * \file Cpu1_Main.c
  * \copyright Copyright (C) Infineon Technologies AG 2019
  * 
  * Use of this file is subject to the terms of use agreed between (i) you or the company in which ordinary course of 
@@ -28,42 +28,31 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
-//추가해주세요
-#include "BSP.h"
-#include "Ultrasonic.h"
-#include "GTM_TIM_Capture.h"
 
-#include "TOF.h"
+extern IfxCpu_syncEvent g_cpuSyncEvent;
 
-
-IfxCpu_syncEvent g_cpuSyncEvent = 0;
-
-void init_total(void){
-    //init_ASCLIN_UART()
-    init_tof();
-    Init_Ultrasonics();
-}
-
-void core0_main(void)
+void core1_main(void)
 {
     IfxCpu_enableInterrupts();
     
-    /* !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
-     * Enable the watchdogs and service them periodically if it is required
+    /* !!WATCHDOG1 IS DISABLED HERE!!
+     * Enable the watchdog and service it periodically if it is required
      */
     IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
-    IfxScuWdt_disableSafetyWatchdog(IfxScuWdt_getSafetyWatchdogPassword());
     
-    init_tof();
-
     /* Wait for CPU sync event */
     IfxCpu_emitEvent(&g_cpuSyncEvent);
     IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
 
 
+    //초음파센서 값 사용시 cpu0에서 헤더 include 후
+    UData sensor_data = get_UltrasonicData(); //사용할곳에서 선언해주기
+    //sensor_data.side_filtered (측방), sensor_data.rear_filtered(후방) 선택 가능
 
     while(1)
     {
+        //메인 루프에서 돌려야 하는것
+        get_tof_distance();
 
     }
 }

@@ -40,9 +40,9 @@
 /*-------------------------------------------------Global variables--------------------------------------------------*/
 /*********************************************************************************************************************/
 static float32_t sensor_side_avg;
-static float32_t sensor_back_avg;
+static float32_t sensor_rear_avg;
 static uint32_t sensor_side_count;
-static uint32_t sensor_back_count;
+static uint32_t sensor_rear_count;
 
 /*********************************************************************************************************************/
 /*--------------------------------------------Private Variables/Constants--------------------------------------------*/
@@ -56,6 +56,13 @@ static uint32_t sensor_back_count;
 /*---------------------------------------------Function Implementations----------------------------------------------*/
 /*********************************************************************************************************************/
 
+void init_Ultra_Filter(void) {
+    sensor_side_avg = 0.0F;
+    sensor_rear_avg = 0.0F;
+    sensor_side_count = 0U;
+    sensor_rear_count = 0U;
+}
+
 float32_t mov_AVG_Filter(float32_t new_value, SENSOR_TYPE sensor) {
     float32_t *avg;
     uint32_t *count;
@@ -64,8 +71,8 @@ float32_t mov_AVG_Filter(float32_t new_value, SENSOR_TYPE sensor) {
         avg = &sensor_side_avg;
         count = &sensor_side_count;
     } else {
-        avg = &sensor_back_avg;
-        count = &sensor_back_count;
+        avg = &sensor_rear_avg;
+        count = &sensor_rear_count;
     }
 
     if(new_value < 2.00 || new_value > 400.0) {
@@ -82,4 +89,12 @@ float32_t mov_AVG_Filter(float32_t new_value, SENSOR_TYPE sensor) {
     (*count)++;
 
     return *avg;
+}
+
+uint32_t get_bUltra_val(float32_t maf){
+    UData data;
+    data.side_filtered = sensor_side_avg;
+    data.rear_filtered = sensor_rear_avg;
+
+    return data;
 }

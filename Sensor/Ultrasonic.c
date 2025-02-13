@@ -31,7 +31,6 @@
 
 #include "Ultrasonic.h"
 #include "GTM_TIM_Capture.h"
-#include "ASCLIN_UART.h"
 
 #include "Ifx_reg.h"
 
@@ -49,10 +48,6 @@
 
 void Init_Ultrasonics(void)
 {
-	/* Init Rear Ultrasonic Pin */
-	//MODULE_P00.IOCR0.B.PC0 = 0x10; /* Rear TRIG */
-	//MODULE_P20.IOCR0.B.PC1 = 0x2; /* Rear ECHO */
-
 	init_TIM();
 	side_TIM();
     /* Send Trigger Pulse */
@@ -63,52 +58,22 @@ double ReadUltrasonic_noFilt(void)
 {
 	float32_t b_duration;
 	float32_t b_distance;
-	//uint8_t data[1];
 
 	/* Calculate Distance */
 	b_duration = measure_PWM();
 	b_distance = 0.0343 * b_duration / 2.0; // cm/us
-
-	//data[0] = (uint8_t)distance;
-
-	//send_ASCLIN_UART_message(data, (Ifx_SizeT)1);
+	mov_AVG_Filter(b_distance, SENSOR_REAR);
 
 	return b_distance;
 }
+
 double SideUltrasonic_noFilt(void) {
     float32_t s_duration;
     float32_t s_distance;
 
     s_duration = side_PWM();
     s_distance = 0.0343 * s_duration / 2.0;
+    mov_AVG_Filter(s_distance, SENSOR_SIDE);
 
     return s_distance;
 }
-
-double ReadUltrasonic_Filt(void)
-{
-	double distance_nofilt;
-	static double avg_filt_buf[FILT_SIZE] = {0,};
-	static int old_index = 0;
-	double distance_filt;
-	static int sensorRxCnt = 0;
-
-	distance_nofilt = ReadUltrasonic_noFilt();
-
-	++old_index;
-	old_index %= FILT_SIZE;  // Buffer Size = 5
-	avg_filt_buf[old_index] = distance_nofilt;
-	sensorRxCnt++;
-
-	/* Calculate Moving Average Filter */
-	if (sensorRxCnt >= FILT_SIZE) {
-		double sum = 0;
-		for (int i = 0; i < FILT_SIZE; i++) { sum += avg_filt_buf[i]; }
-		distance_filt = sum / FILT_SIZE;
-	}
-	else
-		distance_filt = distance_nofilt;
-
-	return distance_filt;
-}
-

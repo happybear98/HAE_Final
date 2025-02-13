@@ -38,7 +38,7 @@
 #define PWM_OUT         IfxGtm_TOM0_9_TOUT10_P00_1_OUT  /* Port pin which is driven by the PWM                      */
 #define PWM_IN          IfxGtm_TIM2_3_TIN60_P20_1_IN     /* Input port pin for the PWM signal                        */
 #define SIDE_PWM_IN     IfxGtm_TIM2_4_TIN14_P00_5_IN
-#define PWM_PERIOD      5000                           /* PWM signal period for the TOM                            */
+#define PWM_PERIOD      10000                           /* PWM signal period for the TOM                            */
 #define DUTY_CYCLE      PWM_PERIOD / 10                  /* PWM signal duty cycle for the TOM                        */
 
 #define secTous 1000000
