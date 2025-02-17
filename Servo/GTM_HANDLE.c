@@ -29,24 +29,21 @@
 /*********************************************************************************************************************/
 #include "GTM_HANDLE.h"
 
+#include "BSP.h"
+
 /*********************************************************************************************************************/
 /*------------------------------------------------------Macros-------------------------------------------------------*/
 /*********************************************************************************************************************/
-#define ISR_PRIORITY_ATOM       10                                  /* Interrupt priority number                        */
-#define HANDLE                   IfxGtm_ATOM1_2_TOUT12_P00_3_OUT     /* P20_1 is servo_1                                 */
+#define ISR_PRIORITY_ATOM       40                                  /* Interrupt priority number                        */
+#define HANDLE                  IfxGtm_ATOM1_6_TOUT16_P00_7_OUT     /* P20_1 is servo_1                                 */
 #define CLK_FREQ                1000000.0f                          /* CMU clock frequency, in Hertz                    */
 #define SERVO_PWM_PERIOD        10000                               /* PWM period for the ATOM, in ticks                */
 
 #define DEGREE_0                650
-#define DEGREE_45               1050
-#define DEGREE_135              1950
 #define DEGREE_180              2350
 #define NEUTRAL                 1500
 
-#define STEP                    2                                   //us
-#define DEL_TIME                1000000                             //10ms
-
-#define MAX_RPM                 100
+#define MAX_RPM                 100.0F          //need MAX RPM
 
 /*********************************************************************************************************************/
 /*-------------------------------------------------Global variables--------------------------------------------------*/
@@ -54,6 +51,8 @@
 IfxGtm_Atom_Pwm_Config h_atomConfig;                            /* Timer configuration structure                    */
 IfxGtm_Atom_Pwm_Driver h_atomDriver;                            /* Timer Driver structure                           */\
 volatile uint32 Hcurr = 0;
+
+float32_t steering_Angle = 0;
 
 /*********************************************************************************************************************/
 /*-----------------------------------------------Function Prototypes-------------------------------------------------*/
@@ -85,25 +84,15 @@ void initHANDLEServo(void)
     updateHANDLEServoDuty(Hcurr);
 }
 
-void HandleAngle(int L_Rpm, int R_Rpm){
-    float32_t steering_Angle = (float32_t)(((R_Rpm - L_Rpm) / MAX_RPM)  * 90);
+void HandleAngle(float32_t RPM_Diff){
+    steering_Angle = (RPM_Diff / MAX_RPM)  * 90;
 
-    int HPWM = 650+(int)(((steering_Angle + 90) / 180) * (2350-650));
+    int HPWM = 650+((steering_Angle + 90) / 180) * (2350-650);
 
     if(HPWM < DEGREE_0) HPWM = DEGREE_0;
     if(HPWM > DEGREE_180) HPWM = DEGREE_180;
 
-    while(Hcurr != HPWM){
-    if(Hcurr < HPWM) {
-        Hcurr += STEP;
-    } else if (Hcurr > HPWM){
-        Hcurr -= STEP;
-    } else {
-        Hcurr = HPWM;
-    }
-    }
-
-    updateHANDLEServoDuty(Hcurr);
+    updateHANDLEServoDuty(HPWM);
 }
 
 /* This function sets the duty cycle of the PWM */

@@ -11,7 +11,7 @@
 /*-----------------------------------------------Function Prototypes-------------------------------------------------*/
 /*********************************************************************************************************************/
 void initHANDLEServo(void);
-void HandleAngle(int L_Rpm, int R_Rpm);
+void HandleAngle(float32_t RPM_Diff);
 
 void setHANDLEDuty(uint32 dutyCycle);
 void updateHANDLEServoDuty(int newCurr);

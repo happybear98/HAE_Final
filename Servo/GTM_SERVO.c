@@ -42,7 +42,7 @@
 #define DEGREE_135              1950
 #define DEGREE_180              2350
 #define NEUTRAL                 1500
-#define FSWING                  1385        //값 테스트 필요
+#define FSWING                  1385        //need Angle check
 #define BSWING                  1615
 #define STEP                    2                                   //us
 #define DEL_TIME                1000000                             //10ms

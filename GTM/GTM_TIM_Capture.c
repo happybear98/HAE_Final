@@ -37,12 +37,12 @@
 /*------------------------------------------------------Macros-------------------------------------------------------*/
 /*********************************************************************************************************************/
 #define PWM_OUT         IfxGtm_ATOM1_1_TOUT10_P00_1_OUT  /* Port pin which is driven by the PWM                      */
-#define PWM_IN          IfxGtm_TIM2_3_TIN60_P20_1_IN     /* Input port pin for the PWM signal                        */
+#define PWM_IN          IfxGtm_TIM2_5_TIN15_P00_6_IN     /* Input port pin for the PWM signal                        */
 #define SIDE_PWM_IN     IfxGtm_TIM2_4_TIN14_P00_5_IN
 
 #define CLK_FREQ        1000000.0f                          /* CMU clock frequency, in Hertz                         */
 #define ULT_PWM_PERIOD  100000                               /* PWM period for the ATOM, in ticks                    */
-#define DUTY_CYCLE      ULT_PWM_PERIOD/4000                 /* PWM signal duty cycle for the TOM                     */
+#define DUTY_CYCLE      ULT_PWM_PERIOD/2000                 /* PWM signal duty cycle for the TOM                     */
 
 
 #define secTous 1000000
