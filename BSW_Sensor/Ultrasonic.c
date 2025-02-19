@@ -65,8 +65,9 @@ double ReadUltrasonic_noFilt(void)
     b_distance = 0.343 * b_duration / 2.0;
     if(!isnan(b_distance) && b_distance > 0.0) {
         if(b_distance < 50.0){b_distance = 50.0;}
+        if(b_distance > 2000.0){b_distance = 2000.0;}
 
-        median_filter(b_distance, b_duration);
+       low_pass_filter(b_distance, b_duration);
     }
 
     rearcheck = b_distance;
