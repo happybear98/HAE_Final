@@ -30,7 +30,7 @@
 /*-----------------------------------------------------Includes------------------------------------------------------*/
 /*********************************************************************************************************************/
 #include <ULTRA_FILT.h>
-//#include "ASW/BCW.h"
+#include "ASW/BCW.h"
 #include <math.h>
 
 /*********************************************************************************************************************/
@@ -48,8 +48,9 @@ static char firstFlag = 0;
 static char mfFlag = 0;
 const float32 ALLOWED_CHANGE = 100.0;
 
-float32 KF = 0.0;
-float32 MF = 0.0;
+static float32 KF = 0.0;
+static float32 MF = 0.0;
+static float32 durr = 0.0F;
 
 /*********************************************************************************************************************/
 /*--------------------------------------------Private Variables/Constants--------------------------------------------*/
@@ -90,6 +91,8 @@ float32 low_pass_filter(float32 new_value, float32 dur){
 
     prev_value = new_value;
 
+    durr = dur;
+
     return LPF;
 }
 
@@ -116,6 +119,7 @@ float32 km_update(UKFilter *kmf, float32 Z) {
     update_median_filter(&mf, kmfRESULT);
 
     //BCW active
+    Back_Collision_Warning(MF, durr);
 
     return kmfRESULT;
 }

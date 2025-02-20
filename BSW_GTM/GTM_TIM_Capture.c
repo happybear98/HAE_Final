@@ -35,13 +35,13 @@
 /*********************************************************************************************************************/
 /*------------------------------------------------------Macros-------------------------------------------------------*/
 /*********************************************************************************************************************/
-#define PWM_OUT         IfxGtm_ATOM1_1_TOUT10_P00_1_OUT  /* Port pin which is driven by the PWM                      */
+#define PWM_OUT         IfxGtm_ATOM1_2_TOUT12_P00_3_OUT
 #define PWM_IN          IfxGtm_TIM2_3_TIN13_P00_4_IN     /* Input port pin for the PWM signal                        */
 #define SIDE_PWM_IN     IfxGtm_TIM2_4_TIN14_P00_5_IN
 
-#define CLK_FREQ        1000000.0f                          /* CMU clock frequency, in Hertz                         */
-#define ULT_PWM_PERIOD  100000                               /* PWM period for the ATOM, in ticks                    */
-#define DUTY_CYCLE      ULT_PWM_PERIOD/2000                 /* PWM signal duty cycle for the TOM                     */
+#define CLK_FREQ        1000000.0f
+#define ULT_PWM_PERIOD  100000
+#define DUTY_CYCLE      ULT_PWM_PERIOD/2000
 
 
 #define secTous 1000000
@@ -78,25 +78,21 @@ void init_TIM(void)
     IfxGtm_Cmu_enableClocks(&MODULE_GTM, IFXGTM_CMU_CLKEN_CLK0);        /* Enable the CMU clock 0                   */
 
     IfxGtm_Tim_In_Config configTIM;
+    IfxGtm_Tim_In_Config sideTIM;
 
     IfxGtm_Tim_In_initConfig(&configTIM, &MODULE_GTM);                  /* Initialize default parameters            */
     configTIM.filter.inputPin = &PWM_IN;                                /* Select input port pin                    */
     configTIM.filter.inputPinMode = IfxPort_InputMode_pullDown;         /* Select input port pin mode               */
-    IfxGtm_Tim_In_init(&g_driverTIM, &configTIM);                       /* Initialize the TIM                       */
-}
 
-void side_TIM(void){
-    IfxGtm_enable(&MODULE_GTM);                                         /* Enable the GTM                           */
-    IfxGtm_Cmu_enableClocks(&MODULE_GTM, IFXGTM_CMU_CLKEN_CLK0);        /* Enable the CMU clock 0                   */
-
-    IfxGtm_Tim_In_Config sideTIM;
     IfxGtm_Tim_In_initConfig(&sideTIM, &MODULE_GTM);
     sideTIM.filter.inputPin = &SIDE_PWM_IN;
     sideTIM.filter.inputPinMode = IfxPort_InputMode_pullDown;
+
+    IfxGtm_Tim_In_init(&g_driverTIM, &configTIM);                       /* Initialize the TIM                       */
     IfxGtm_Tim_In_init(&s_driverTIM, &sideTIM);
 }
 
-
+//move to GTM_ATOM_PWM.c
 /* Initialization of the TOM and generation of a PWM signal */
 void generate_PWM(void)
 {
@@ -113,7 +109,7 @@ void generate_PWM(void)
     u_atomConfig.atom = PWM_OUT.atom;                                         /* Select the ATOM depending on the LED     */
     u_atomConfig.atomChannel = PWM_OUT.channel;                               /* Select the channel depending on the LED  */
     u_atomConfig.period = ULT_PWM_PERIOD;                                 /* Set timer period                         */
-    u_atomConfig.pin.outputPin = &PWM_OUT;                                    /* Set LED as output                        */
+    u_atomConfig.pin.outputPin = &PWM_OUT;                                    /* Set output                        */
     u_atomConfig.synchronousUpdateEnabled = TRUE;                           /* Enable synchronous update                */
     u_atomConfig.dutyCycle = DUTY_CYCLE;
 

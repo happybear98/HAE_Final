@@ -52,7 +52,6 @@ static float32 sidecheck = 0.0;
 void Init_Ultrasonics(void)
 {
     init_TIM();
-    side_TIM();
 }
 
 double ReadUltrasonic_noFilt(void)

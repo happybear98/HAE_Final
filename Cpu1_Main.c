@@ -54,7 +54,6 @@ void core1_main(void)
     IfxCpu_emitEvent(&g_cpuSyncEvent);
     IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
 
-
     while(1)
     {
         get_tof_distance();
