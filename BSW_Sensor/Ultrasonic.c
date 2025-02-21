@@ -29,8 +29,8 @@
 /*-----------------------------------------------------Includes------------------------------------------------------*/
 /*********************************************************************************************************************/
 #include <Ultrasonic.h>
-#include "BSW_Filter/ULTRA_FILT.h"
-#include "BSW_GTM/GTM_TIM_Capture.h"
+#include "../BSW_Filter/ULTRA_FILT.h"
+#include "../BSW_GTM/GTM_TIM_Capture.h"
 
 
 /*********************************************************************************************************************/
@@ -62,7 +62,7 @@ double ReadUltrasonic_noFilt(void)
     /* Calculate Distance */
     b_duration = measure_PWM();
     b_distance = 0.343 * b_duration / 2.0;
-    if(!isnan(b_distance) && b_distance > 0.0) {
+    if(!isnan(b_distance) && (b_distance > 0.0)) {
         if(b_distance < 50.0){b_distance = 50.0;}
         if(b_distance > 2000.0){b_distance = 2000.0;}
 
